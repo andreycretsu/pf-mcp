@@ -1,135 +1,156 @@
-# 🎨 Lookbook Design System
+# 🚀 MCP Design System Server
 
-A beautiful, pixel-perfect Rails design system built with Lookbook, featuring components directly translated from Vue.js designs.
+A Model Context Protocol (MCP) server that bridges your Rails + Vue design system with AI tools, implementing Typeform's Iteration 2 approach for design-to-code workflows.
 
-## ✨ Features
+## Overview
 
-- **🎯 Pixel-Perfect Components** - Built to match Figma designs exactly
-- **📚 Lookbook Integration** - Interactive component documentation
-- **🔧 Rails 7.1 + ViewComponent** - Modern Rails development stack
-- **🎨 FontAwesome Pro Icons** - Professional icon library
-- **📱 Responsive Design** - Mobile-first approach
-- **♿ Accessible** - WCAG compliant components
+This MCP server provides on-demand access to your design system components, enabling AI tools (like Cursor, Claude Code) to generate accurate Rails code from Figma designs without consuming the entire context window.
 
-## 🚀 Components
+## Architecture
 
-### IconColorPicker
+### Components
+- **Rails ViewComponents** → Documented in Lookbook
+- **Vue Components** → Documented in Storybook  
+- **Design Tokens** → Colors, spacing, typography
+- **Assets** → Icons, illustrations
 
-A comprehensive icon and color picker component featuring:
+### MCP Endpoints
 
-- **240+ FontAwesome Pro icons** organized by categories
-- **Searchable icon grid** with smooth scrolling
-- **Color palette** with predefined design system colors
-- **Custom color input** with hex value support
-- **Figma-accurate styling** with proper shadows and selection states
+Following Typeform's approach, the server exposes these tool calls:
 
-### ControlTile
+- `list-components` → `GET /mcp/components`
+- `get-component-docs` → `GET /mcp/components/:name`
+- `list-assets` → `GET /mcp/assets`
+- `get-asset-docs` → `GET /mcp/assets/:name`
+- `list-tokens` → `GET /mcp/tokens`
+- `get-token-docs` → `GET /mcp/tokens/:name`
+- `map-figma-to-rails` → `POST /mcp/map-figma-to-rails`
 
-Atomic control components with:
+## Setup
 
-- **Multiple variants** (primary, secondary, success, warning, danger, outline)
-- **Icon + control combinations** with mutual exclusivity
-- **Hover and active states** matching design specifications
-- **Clean, minimal API** for easy integration
+1. **Install dependencies:**
+   ```bash
+   bundle install
+   ```
 
-## 🛠 Development
+2. **Start the server:**
+   ```bash
+   rails server
+   ```
 
-### Prerequisites
+3. **Access the API:**
+   - Root: `http://localhost:3000/`
+   - Components: `http://localhost:3000/mcp/components`
+   - Lookbook: `http://localhost:3000/lookbook`
 
-- Ruby 3.4.5+
-- Rails 7.1+
-- Node.js (for FontAwesome icons)
+## Usage Examples
 
-### Getting Started
-
+### List All Components
 ```bash
-# Install dependencies
-bundle install
-
-# Start the Rails server
-rails server
-
-# Visit Lookbook
-open http://localhost:3000/lookbook
+curl http://localhost:3000/mcp/components
 ```
 
-## 📁 Project Structure
-
-```
-app/
-├── components/           # Rails ViewComponents
-│   ├── icon_color_picker_component.rb
-│   ├── icon_color_picker_component.html.erb
-│   ├── control_tile_component.rb
-│   ├── control_tile_component.html.erb
-│   └── previews/         # Lookbook previews
-│       ├── icon_color_picker_component_preview.rb
-│       └── control_tile_component_preview.rb
-└── controllers/
-    └── home_controller.rb
-
-config/
-├── routes.rb            # Lookbook mounted at /lookbook
-└── application.rb       # Rails 7.1 configuration
+### Get Badge Component Documentation
+```bash
+curl http://localhost:3000/mcp/components/badge
 ```
 
-## 🎨 Design System
-
-This library implements components from a comprehensive design system featuring:
-
-- **Consistent Color Palette** - Neutrals, primary, and semantic colors
-- **Typography Scale** - Inter font family with proper weights
-- **Spacing System** - 4px grid-based spacing
-- **Component States** - Hover, active, disabled, and selected states
-- **Shadows & Effects** - Subtle elevation and depth
-
-## 🔧 Usage
-
-### IconColorPicker
-
-```erb
-<%= render IconColorPickerComponent.new(
-  selected_icon: "star",
-  selected_color: "primary"
-) %>
+### Map Figma to Rails
+```bash
+curl -X POST http://localhost:3000/mcp/map-figma-to-rails \
+  -H "Content-Type: application/json" \
+  -d '{
+    "figma_data": {
+      "componentName": "Badge",
+      "properties": {
+        "Size": "L 24px",
+        "Emphasis": "High",
+        "Color": "Grey",
+        "Icon": "true",
+        "Label": "Badge"
+      },
+      "icon": {
+        "name": "star",
+        "type": "solid"
+      },
+      "text": "Badge"
+    }
+  }'
 ```
 
-### ControlTile
+## Figma to Rails Mapping
 
-```erb
-<%= render ControlTileComponent.new(
-  variant: "primary",
-  icon: "heart",
-  label: "Favorite",
-  size: "medium"
-) %>
+The server implements the mapping workflow from your example:
+
+**Figma Properties** → **Rails Component Props**
+- `Size: L 24px` → `size: "large"`
+- `Emphasis: High` → `emphasized: true`
+- `Color: Grey` → `color: "neutral"`
+- `Icon: star` → `icon: "star"`
+- `Label: Badge` → `text: "Badge"`
+
+**Generated Rails Code:**
+```ruby
+render Vue::BadgeComponent.new(
+  text: "Badge",
+  size: "large",
+  color: "neutral",
+  icon: "star",
+  icon_type: "solid",
+  emphasized: true
+)
 ```
 
-## 🌐 Integration with MCP Server
+## Integration with AI Tools
 
-This design system is designed to work with the [MCP Design System Server](https://github.com/andreycretsu/mcp-design-system-server) for AI-powered code generation.
+### Cursor/Claude Code Configuration
+Add this to your AI tool's MCP configuration:
 
-The MCP server provides:
-- Component discovery and documentation
-- Figma-to-Rails property mapping
-- Automated code generation for feature developers
+```json
+{
+  "mcpServers": {
+    "design-system": {
+      "command": "rails",
+      "args": ["server"],
+      "env": {
+        "RAILS_ENV": "development"
+      }
+    }
+  }
+}
+```
 
-## 🤝 Contributing
+### Workflow
+1. **AI reads Figma design** via Figma MCP
+2. **AI queries design system** via this MCP server
+3. **AI generates Rails code** using component documentation
+4. **Feature developers** use generated code in their Rails views
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-component`
-3. Make your changes and add Lookbook previews
-4. Test with Lookbook: `rails server` then visit `/lookbook`
-5. Commit your changes: `git commit -m 'Add amazing component'`
-6. Push to the branch: `git push origin feature/amazing-component`
-7. Open a Pull Request
+## Customization
 
-## 📄 License
+### Adding New Components
+1. Add component data to `RailsDocsProvider` or `VueDocsProvider`
+2. Update mapping rules in the respective provider
+3. Test with the API endpoints
 
-MIT License - see LICENSE for details
+### Updating Mapping Rules
+Edit the `figma_mapping` hashes in the component providers to match your Figma property names and values.
 
-## 🙏 Acknowledgments
+## Benefits
 
-- Built with Lookbook
-- Icons by FontAwesome Pro
-- Styled with love and attention to Figma details ❤️ 
+- **Reduced Context Usage**: Only loads needed component docs (30-40% vs 70%)
+- **Accurate Code Generation**: Uses your actual component APIs
+- **Framework Consistency**: Maintains Rails/Vue component alignment
+- **Design System Compliance**: Ensures generated code follows your patterns
+
+## Next Steps
+
+1. **Integrate with Lookbook API** for dynamic Rails component discovery
+2. **Connect to Vue Storybook API** for real-time Vue component data
+3. **Add more component mappings** as you build out your design system
+4. **Implement caching** for better performance
+5. **Add authentication** if needed for production use
+
+## Contributing
+
+This is a foundation that you can extend based on your specific needs. The modular design makes it easy to add new components, mapping rules, and integrations. 
