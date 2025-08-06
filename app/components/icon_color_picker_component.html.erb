@@ -1,0 +1,277 @@
+<div class="icon-color-picker" data-controller="icon-color-picker">
+  <div class="picker-container">
+    <!-- Icon Picker Section -->
+    <div class="icon-section">
+      <h3 class="section-title">Choose Icon</h3>
+      <div class="search-container">
+        <input 
+          type="text" 
+          placeholder="Search icons..." 
+          class="search-input"
+          data-icon-color-picker-target="searchInput"
+          data-action="input->icon-color-picker#filterIcons"
+        >
+      </div>
+      
+      <div class="icon-categories">
+        <% icon_categories.each do |category| %>
+          <div class="category">
+            <h4 class="category-title"><%= category[:name] %></h4>
+            <div class="icon-grid" data-icon-color-picker-target="iconGrid">
+              <% category[:icons].each do |icon| %>
+                <button 
+                  class="icon-button <%= 'selected' if selected_icon == icon %>"
+                  data-icon="<%= icon %>"
+                  data-action="click->icon-color-picker#selectIcon"
+                  title="<%= icon.humanize %>"
+                >
+                  <i class="fas fa-<%= icon %>"></i>
+                </button>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Color Picker Section -->
+    <div class="color-section">
+      <h3 class="section-title">Choose Color</h3>
+      <div class="color-grid">
+        <% color_palette.each do |color| %>
+          <button 
+            class="color-button <%= 'selected' if selected_color == color[:name] %>"
+            data-color="<%= color[:name] %>"
+            data-action="click->icon-color-picker#selectColor"
+            title="<%= color[:label] %>"
+            style="background-color: <%= color[:value] %>"
+          ></button>
+        <% end %>
+      </div>
+      
+      <div class="custom-color">
+        <label for="custom-color-input">Custom Color:</label>
+        <input 
+          type="color" 
+          id="custom-color-input"
+          class="custom-color-input"
+          data-icon-color-picker-target="customColorInput"
+          data-action="change->icon-color-picker#selectCustomColor"
+        >
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview Section -->
+  <div class="preview-section">
+    <h3 class="section-title">Preview</h3>
+    <div class="preview-container">
+      <% if selected_icon %>
+        <div class="preview-icon" style="color: <%= selected_color_value %>">
+          <i class="fas fa-<%= selected_icon %>"></i>
+        </div>
+        <div class="preview-text">
+          <strong>Icon:</strong> <%= selected_icon.humanize %><br>
+          <strong>Color:</strong> <%= selected_color&.humanize || 'Custom' %>
+        </div>
+      <% else %>
+        <div class="preview-placeholder">
+          Select an icon and color to see preview
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<style>
+.icon-color-picker {
+  font-family: 'Inter', sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.picker-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #1f2937;
+}
+
+.search-container {
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.category {
+  margin-bottom: 24px;
+}
+
+.category-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 8px;
+}
+
+.icon-button {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  font-size: 16px;
+  color: #6b7280;
+}
+
+.icon-button:hover {
+  border-color: #3b82f6;
+  background: #f8fafc;
+  color: #3b82f6;
+}
+
+.icon-button.selected {
+  border-color: #3b82f6;
+  background: #3b82f6;
+  color: white;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.color-button {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.color-button:hover {
+  border-color: #3b82f6;
+  transform: scale(1.05);
+}
+
+.color-button.selected {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.custom-color {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.custom-color label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.custom-color-input {
+  width: 60px;
+  height: 40px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.preview-section {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 20px;
+}
+
+.preview-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: #f9fafb;
+  border-radius: 8px;
+  min-height: 80px;
+}
+
+.preview-icon {
+  font-size: 32px;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.preview-text {
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.preview-placeholder {
+  color: #9ca3af;
+  font-style: italic;
+  text-align: center;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .picker-container {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .icon-grid {
+    grid-template-columns: repeat(auto-fill, minmax(35px, 1fr));
+  }
+  
+  .color-grid {
+    grid-template-columns: repeat(auto-fill, minmax(35px, 1fr));
+  }
+}
+</style> 

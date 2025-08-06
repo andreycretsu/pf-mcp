@@ -1,0 +1,90 @@
+{
+  "components": [
+    {
+      "displayName": "Badge",
+      "componentName": "PfBadge",
+      "sourcePath": "src/components/Badge.vue",
+      "props": [
+        {
+          "name": "size",
+          "type": "String",
+          "required": false,
+          "default": "medium",
+          "options": ["small", "medium", "large"],
+          "description": "Size of the badge"
+        },
+        {
+          "name": "color",
+          "type": "String",
+          "required": false,
+          "default": "neutral",
+          "options": ["neutral", "primary", "danger"],
+          "description": "Color variant of the badge"
+        },
+        {
+          "name": "icon",
+          "type": "String",
+          "required": false,
+          "description": "Icon name to display"
+        },
+        {
+          "name": "iconType",
+          "type": "String",
+          "required": false,
+          "default": "solid",
+          "options": ["solid", "regular"],
+          "description": "Icon style"
+        },
+        {
+          "name": "emphasized",
+          "type": "Boolean",
+          "required": false,
+          "default": false,
+          "description": "Whether the badge should be emphasized"
+        }
+      ],
+      "examples": [
+        {
+          "title": "Basic Badge",
+          "description": "Simple badge with text",
+          "code": "<PfBadge>New</PfBadge>"
+        },
+        {
+          "title": "Badge with Icon",
+          "description": "Badge with icon and emphasis",
+          "code": "<PfBadge icon=\"star\" iconType=\"solid\" emphasized>Badge</PfBadge>"
+        }
+      ]
+    },
+    {
+      "displayName": "Button",
+      "componentName": "PfButton",
+      "sourcePath": "src/components/Button.vue",
+      "props": [
+        {
+          "name": "variant",
+          "type": "String",
+          "required": false,
+          "default": "primary",
+          "options": ["primary", "secondary", "danger"],
+          "description": "Button variant"
+        },
+        {
+          "name": "size",
+          "type": "String",
+          "required": false,
+          "default": "medium",
+          "options": ["small", "medium", "large"],
+          "description": "Button size"
+        }
+      ],
+      "examples": [
+        {
+          "title": "Primary Button",
+          "description": "Default primary button",
+          "code": "<PfButton>Click me</PfButton>"
+        }
+      ]
+    }
+  ]
+} 

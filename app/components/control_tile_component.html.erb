@@ -1,0 +1,90 @@
+<button 
+  class="<%= css_classes %>"
+  style="<%= variant_styles %> <%= size_styles %>"
+  <%= 'disabled' if disabled %>
+  data-controller="control-tile"
+  data-action="click->control-tile#handleClick"
+>
+  <% if icon %>
+    <i class="<%= icon_classes %>"></i>
+  <% end %>
+  
+  <% if label %>
+    <span class="<%= label_classes %>"><%= label %></span>
+  <% end %>
+</button>
+
+<style>
+.control-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  line-height: 1;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.control-tile:hover:not(.control-tile--disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.control-tile:active:not(.control-tile--disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.control-tile--active {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.control-tile--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.control-tile__icon {
+  font-size: 1em;
+}
+
+.control-tile__label {
+  font-size: 1em;
+}
+
+.control-tile__label--with-icon {
+  margin-left: 4px;
+}
+
+/* Size variants */
+.control-tile--small {
+  min-height: 32px;
+}
+
+.control-tile--medium {
+  min-height: 40px;
+}
+
+.control-tile--large {
+  min-height: 48px;
+}
+
+/* Focus styles */
+.control-tile:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.control-tile:focus:not(.control-tile--disabled) {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+</style> 
